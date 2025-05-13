@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "AspNetCore_gRPC.Protos";
+
+service ProductService{
+	rpc CreateProduct(stream CreateProductRequest) returns (stream CreateProductReply);
+
+	rpc GetAllProducts(GetAllProductsRequset) returns (stream GetAllProductsReply);
+
+	rpc UpdateProduct(UpdateProductReply) returns (UpdateProductReply);
+
+	rpc GetProductByID(GetProductByIDRequset) returns (GetProductByIDReply);
+
+	rpc RemoveProduct(stream RemoveProductByIDRequset) returns (RemoveProductByIDReply);
+}
+
+message CreateProductRequest{
+	string title = 1;
+	string Descriptions = 2;
+	int32 price = 3; 
+}
+
+message CreateProductReply{
+	int32 status=1;
+	string message = 2;
+}
+
+message GetAllProductsRequset{
+	int32 page=1;
+	int32 take=2;
+}
+
+message GetAllProductsReply{
+	int32 id=1;
+	string title = 2;
+	string descriptions = 3;
+	int32 price = 4; 
+	google.protobuf.Timestamp createDate = 5;
+}
+
+message UpdateProductRequset{
+	int32 id=1;
+	string title = 2;
+	string descriptions = 3;
+	int32 price = 4; 
+}
+
+message UpdateProductReply{
+	int32 status=1;
+	string message = 2;
+}
+
+message GetProductByIDRequset{
+	int32 id=1;
+}
+
+message GetProductByIDReply{
+	int32 id=1;
+	string title = 2;
+	string descriptions = 3;
+	int32 price = 4; 
+	google.protobuf.Timestamp createDate = 5;
+}
+
+message RemoveProductByIDRequset{
+	int32 id=1;
+}
+
+message RemoveProductByIDReply{
+	int32 status=1;
+	string message = 2;
+	int32 removeCount = 3;
+}
