@@ -11,6 +11,6 @@ namespace AspNetCore_gRPC.Context
             
         }
 
-        public DbSet<Product> products;
+        public DbSet<Product> Products { get; set; }
     }
 }

@@ -9,7 +9,7 @@ service ProductService{
 
 	rpc GetAllProducts(GetAllProductsRequset) returns (stream GetAllProductsReply);
 
-	rpc UpdateProduct(UpdateProductReply) returns (UpdateProductReply);
+	rpc UpdateProduct(UpdateProductRequset) returns (UpdateProductReply);
 
 	rpc GetProductByID(GetProductByIDRequset) returns (GetProductByIDReply);
 
@@ -25,6 +25,7 @@ message CreateProductRequest{
 message CreateProductReply{
 	int32 status=1;
 	string message = 2;
+	int32 createdItemCount = 3;
 }
 
 message GetAllProductsRequset{
@@ -71,5 +72,5 @@ message RemoveProductByIDRequset{
 message RemoveProductByIDReply{
 	int32 status=1;
 	string message = 2;
-	int32 removeCount = 3;
+	int32 removeItemCount = 3;
 }
