@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AspNetCore_gRPC.Models
+namespace Models
 {
     public class Product
     {

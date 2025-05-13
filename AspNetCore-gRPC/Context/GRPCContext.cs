@@ -1,8 +1,7 @@
-﻿
-using AspNetCore_gRPC.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Models;
 
-namespace AspNetCore_gRPC.Context
+namespace Context
 {
     public class GRPCContext : DbContext
     {

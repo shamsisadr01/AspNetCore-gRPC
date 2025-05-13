@@ -1,13 +1,13 @@
-﻿using AspNetCore_gRPC.Context;
-using AspNetCore_gRPC.Models;
-using AspNetCore_gRPC.Protos;
+﻿using AspNetCore_gRPC.Protos.v2;
 using Azure.Core;
+using Context;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
-using static AspNetCore_gRPC.Protos.ProductService;
+using Models;
+using static AspNetCore_gRPC.Protos.v2.ProductService;
 
-namespace AspNetCore_gRPC.Services
+namespace Services.v2
 {
     public class ProductServiceGRPC : ProductServiceBase
     {
@@ -15,15 +15,16 @@ namespace AspNetCore_gRPC.Services
 
         public ProductServiceGRPC(GRPCContext context)
         {
-            this.gRPCContext = context;
+            gRPCContext = context;
         }
 
+     
         public override async Task CreateProduct(IAsyncStreamReader<CreateProductRequest> requestStream, IServerStreamWriter<CreateProductReply> responseStream, ServerCallContext context)
         {
             int createProductCount = 0;
             while (await requestStream.MoveNext())
             {
-                gRPCContext.Products.Add(new Models.Product()
+                gRPCContext.Products.Add(new Product()
                 {
                     CreateDateTime = DateTime.Now,
                     Descriptions = requestStream.Current.Descriptions,
@@ -42,29 +43,10 @@ namespace AspNetCore_gRPC.Services
                 Message = "created succefuly",
                 Status = 200
             });
-            //return base.CreateProduct(requestStream, responseStream, context);
+            
+           // return base.CreateProduct(requestStream, responseStream, context);
         }
 
-        public override async Task<UpdateProductReply> UpdateProduct(UpdateProductRequset request, ServerCallContext context)
-        {
-            Product? product = gRPCContext.Products.FirstOrDefault(p => p.Id == request.Id);
-
-            if (product == null)
-                return null;
-
-            product.Descriptions = request.Descriptions;
-            product.Price = request.Price;
-            product.Title = request.Title;
-
-            gRPCContext.Products.Update(product);
-            await gRPCContext.SaveChangesAsync();
-
-            return new UpdateProductReply()
-            {
-                Message = "Update",
-                Status = 200
-            };
-        }
 
         public override async Task<GetProductByIDReply> GetProductByID(GetProductByIDRequset request, ServerCallContext context)
         {
@@ -78,6 +60,9 @@ namespace AspNetCore_gRPC.Services
             };
             await context.WriteResponseHeadersAsync(headers);
 
+            context.ResponseTrailers.Add("key", "123");
+
+
             return new GetProductByIDReply()
             {
                 Id = product.Id,
@@ -88,28 +73,7 @@ namespace AspNetCore_gRPC.Services
             };
         }
 
-        public override async Task<RemoveProductByIDReply> RemoveProduct(IAsyncStreamReader<RemoveProductByIDRequset> requestStream, ServerCallContext context)
-        {
-            int removeItemCount = 0;
-            while (await requestStream.MoveNext())
-            {
-                Product? product = gRPCContext.Products.FirstOrDefault(p => p.Id == requestStream.Current.Id);
-                if (product == null)
-                    continue;
-
-                gRPCContext.Products.Remove(product);
-                removeItemCount++;
-            }
-
-            await gRPCContext.SaveChangesAsync();
-
-            return new RemoveProductByIDReply()
-            {
-                Message = "Remove",
-                RemoveItemCount = removeItemCount,
-                Status = 200
-            };
-        }
+       
         public override async Task GetAllProducts(GetAllProductsRequset request, IServerStreamWriter<GetAllProductsReply> responseStream, ServerCallContext context)
         {
             int skip = (request.Page - 1) * request.Take;

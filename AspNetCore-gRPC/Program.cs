@@ -1,9 +1,7 @@
-
-
-using AspNetCore_gRPC.Context;
 using AspNetCore_gRPC.Protos;
-using AspNetCore_gRPC.Services;
+using Context;
 using Microsoft.EntityFrameworkCore;
+using Services.v1;
 
 var builder = WebApplication.CreateBuilder(args);
 
